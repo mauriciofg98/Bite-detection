@@ -8,10 +8,18 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.callbacks import TensorBoard
 import os
 import random
+import time
 
-DATADIR = "C:/Users/Kowalski/PycharmProjects/ML/Bite-detection/"
+
+NAME = "bite-detection-log-{}".format(int(time.time()))
+tensorboard =TensorBoard(log_dir='logs/{}'.format(NAME))
+
+#DATADIR = "C:/Users/Kowalski/PycharmProjects/ML/Bite-detection/"
+DATADIR = "/Users/mauricio/Desktop/Bite-detection/"
+
 CATEGORIES = ["normal", "overbite", "underbite"]
 data = []
 for category_num in range(3):
@@ -50,9 +58,9 @@ model = Sequential([
     Conv2D(64, (2,2), input_shape=X.shape[1:]),
     Activation("relu"),
     MaxPooling2D(pool_size=(2,2)),
-
     Flatten(),
     Dense(64),
+    Activation("relu"),
     Dense(1),
     Activation('sigmoid', input_shape=X.shape[1:])
 
@@ -61,7 +69,7 @@ model = Sequential([
 model.compile(optimizer='adam',
               loss='binary_crossentropy',
               metrics=['accuracy'])
-model.fit(trainX, trainY, epochs=10, batch_size=1, validation_split=0.1)
+model.fit(trainX, trainY, epochs=10, batch_size=1, validation_split=0.1, callbacks =[tensorboard])
 
 test_loss, test_acc = model.evaluate(testX, testY, verbose=2)
 print('\nTest accuracy:', test_acc)
