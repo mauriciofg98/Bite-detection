@@ -13,12 +13,14 @@ import os
 import random
 import time
 
+from tensorflow.python.keras.layers import MaxPool2D
+from tensorflow.python.keras.optimizers import Adam
 
 NAME = "bite-detection-log-{}".format(int(time.time()))
 tensorboard =TensorBoard(log_dir='logs/{}'.format(NAME))
 
 #DATADIR = "C:/Users/Kowalski/PycharmProjects/ML/Bite-detection/"
-DATADIR = "/Users/mauricio/Desktop/Bite-detection/"
+DATADIR = "./"
 
 CATEGORIES = ["normal", "overbite", "underbite"]
 data = []
@@ -50,26 +52,28 @@ testX = X[0:10]
 testY = y[0:10]
 
 
-model = Sequential([
-    Conv2D(64, (2,2), input_shape=X.shape[1:]),
-    Activation("relu"),
-    MaxPooling2D(pool_size=(2,2)),
+model2 = Sequential()
+model2.add(Conv2D(200, (3, 3), activation='relu', input_shape=X.shape[1:]))
+model2.add(Conv2D(180,kernel_size=(3,3),activation='relu'))
+model2.add(MaxPooling2D((5, 5)))
+model2.add(Conv2D(180,kernel_size=(3,3),activation='relu'))
+model2.add(Conv2D(140,kernel_size=(3,3),activation='relu'))
+model2.add(Conv2D(100,kernel_size=(3,3),activation='relu'))
+model2.add(Conv2D(50,kernel_size=(3,3),activation='relu'))
+model2.add(MaxPool2D(5,5))
 
-    Conv2D(64, (2,2), input_shape=X.shape[1:]),
-    Activation("relu"),
-    MaxPooling2D(pool_size=(2,2)),
-    Flatten(),
-    Dense(64),
-    Activation("relu"),
-    Dense(1),
-    Activation('sigmoid', input_shape=X.shape[1:])
+model2.add(Flatten())
+model2.add(Dense(180, activation='relu'))
+model2.add(Dense(100,activation='relu'))
+model2.add(Dense(50,activation='relu'))
+model2.add(Dropout(rate=0.5))
+model2.add(Dense(6, activation='softmax'))
 
-])
-
-model.compile(optimizer='adam',
+model2.compile(optimizer=Adam(lr=0.0001),loss='sparse_categorical_crossentropy',metrics=['accuracy'])
+'''model.compile(optimizer='adam',
               loss='binary_crossentropy',
-              metrics=['accuracy'])
-model.fit(trainX, trainY, epochs=10, batch_size=1, validation_split=0.1, callbacks =[tensorboard])
+              metrics=['accuracy'])'''
+model2.fit(trainX, trainY, epochs=3, validation_split=0.3, callbacks =[tensorboard])
 
-test_loss, test_acc = model.evaluate(testX, testY, verbose=2)
+test_loss, test_acc = model2.evaluate(testX, testY, verbose=2)
 print('\nTest accuracy:', test_acc)
