@@ -40,6 +40,15 @@ for features,label in data:
     X.append(features)
     y.append(label)
 
+'''plt.figure(figsize=(10,10))
+for i in range(25):
+    plt.subplot(5,5,i+1)
+    plt.xticks([])
+    plt.yticks([])
+    plt.grid(False)
+    plt.imshow(X[i], cmap=plt.cm.binary)
+    plt.xlabel(CATEGORIES[y[i]])
+plt.show()'''
 np.save('features.npy', X, allow_pickle=True)
 X = np.load('features.npy', allow_pickle=True)
 
@@ -50,6 +59,50 @@ trainX = np.delete(X, np.s_[0:10], axis=0)
 trainY = np.delete(y, np.s_[0:10], axis=0)
 testX = X[0:10]
 testY = y[0:10]
+
+
+'''
+MODEL #1 TEST
+
+model = Sequential()
+model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=X.shape[1:]))
+model.add(MaxPooling2D((2, 2)))
+model.add(Conv2D(64, (3, 3), activation='relu'))
+model.add(MaxPooling2D((2, 2)))
+model.add(Conv2D(64, (3, 3), activation='relu', input_shape=X.shape[1:]))
+model.add(Flatten())
+model.add(Dense(64, activation='relu'))
+model.add(Dense(3, activation='softmax'))
+
+END MODEL #1
+
+MODEL #2 TEST
+
+
+model2 = Sequential()
+model2.add(Conv2D(200, (3, 3), activation='relu', input_shape=X.shape[1:]))
+model2.add(MaxPooling2D((5, 2)))
+
+model2.add(Conv2D(180,kernel_size=(3,3),activation='relu'))
+model2.add(MaxPooling2D((3, 2)))
+model2.add(Conv2D(180,kernel_size=(3,3),activation='relu'))
+model2.add(MaxPooling2D((2, 2)))
+
+model2.add(Conv2D(140,kernel_size=(3,3),activation='relu'))
+model2.add(MaxPooling2D((1, 2)))
+
+
+model2.add(MaxPool2D(5,5))
+
+model2.add(Flatten())
+model2.add(Dense(180, activation='relu'))
+model2.add(Dense(100,activation='relu'))
+model2.add(Dense(50,activation='relu'))
+model2.add(Dropout(rate=0.5))
+model2.add(Dense(3, activation='softmax'))
+
+#END MODEL2 TEST
+'''
 
 
 model2 = Sequential()
@@ -69,11 +122,16 @@ model2.add(Dense(50,activation='relu'))
 model2.add(Dropout(rate=0.5))
 model2.add(Dense(6, activation='softmax'))
 
-model2.compile(optimizer=Adam(lr=0.0001),loss='sparse_categorical_crossentropy',metrics=['accuracy'])
-'''model.compile(optimizer='adam',
-              loss='binary_crossentropy',
-              metrics=['accuracy'])'''
-model2.fit(trainX, trainY, epochs=3, validation_split=0.3, callbacks =[tensorboard])
+model2.compile(optimizer=Adam(lr=0.000001),loss='sparse_categorical_crossentropy',metrics=['accuracy'])
+
+
+history = model2.fit(X, y, epochs=2, batch_size=10, validation_split=0.1, callbacks =[tensorboard])
+
+print(history.history.keys())
+print(history.history.values())
 
 test_loss, test_acc = model2.evaluate(testX, testY, verbose=2)
+
+'''model2.save('Adam.h5')
+'''
 print('\nTest accuracy:', test_acc)
