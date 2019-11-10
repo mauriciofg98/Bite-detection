@@ -123,35 +123,35 @@ model2.add(Dropout(rate=0.5))
 model2.add(Dense(6, activation='softmax'))'''
 
 model = Sequential()
-model.add(Conv2D(32, (3, 3), input_shape=X.shape[1:]))
+model.add(Conv2D(32, (2, 2), input_shape=X.shape[1:]))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Conv2D(32, (3, 3)))
+model.add(Conv2D(32, (2, 2)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Conv2D(64, (3, 3)))
+model.add(Conv2D(64, (2, 2)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
 model.add(Flatten())  # this converts our 3D feature maps to 1D feature vectors
 model.add(Dense(64))
 model.add(Activation('relu'))
-model.add(Dropout(0.5))
+model.add(Dropout(0.1))
 model.add(Dense(3))
 model.add(Activation('sigmoid'))
 
-model.compile(optimizer=rmsprop(lr=0.000001),loss='sparse_categorical_crossentropy',metrics=['accuracy'])
+model.compile(optimizer=rmsprop(lr=0.00001),loss='sparse_categorical_crossentropy',metrics=['accuracy'])
 
 
-history = model.fit(X, y, epochs=50, steps_per_epoch=2000, validation_split=0.1, callbacks =[tensorboard])
+history = model.fit(X, y, epochs=50, steps_per_epoch=2000, validation_split=0.1, validation_steps=800, callbacks =[tensorboard])
 
 print(history.history.keys())
 print(history.history.values())
 
 test_loss, test_acc = model.evaluate(testX, testY, verbose=2)
 
-model.save('rmsprop.h5')
+model.save('rmsprop2.h5')
 
 print('\nTest accuracy:', test_acc)
