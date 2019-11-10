@@ -14,7 +14,7 @@ import random
 import time
 
 from tensorflow.python.keras.layers import MaxPool2D
-from tensorflow.python.keras.optimizers import Adam
+from tensorflow.python.keras.optimizers import Adam, rmsprop
 
 NAME = "bite-detection-log-{}".format(int(time.time()))
 tensorboard =TensorBoard(log_dir='logs/{}'.format(NAME))
@@ -105,7 +105,7 @@ model2.add(Dense(3, activation='softmax'))
 '''
 
 
-model2 = Sequential()
+'''model2 = Sequential()
 model2.add(Conv2D(200, (3, 3), activation='relu', input_shape=X.shape[1:]))
 model2.add(Conv2D(180,kernel_size=(3,3),activation='relu'))
 model2.add(MaxPooling2D((5, 5)))
@@ -120,18 +120,38 @@ model2.add(Dense(180, activation='relu'))
 model2.add(Dense(100,activation='relu'))
 model2.add(Dense(50,activation='relu'))
 model2.add(Dropout(rate=0.5))
-model2.add(Dense(6, activation='softmax'))
+model2.add(Dense(6, activation='softmax'))'''
 
-model2.compile(optimizer=Adam(lr=0.000001),loss='sparse_categorical_crossentropy',metrics=['accuracy'])
+model = Sequential()
+model.add(Conv2D(32, (3, 3), input_shape=X.shape[1:]))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Conv2D(32, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Conv2D(64, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Flatten())  # this converts our 3D feature maps to 1D feature vectors
+model.add(Dense(64))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
+model.add(Dense(3))
+model.add(Activation('sigmoid'))
+
+model.compile(optimizer=rmsprop(lr=0.000001),loss='sparse_categorical_crossentropy',metrics=['accuracy'])
 
 
-history = model2.fit(X, y, epochs=2, batch_size=10, validation_split=0.1, callbacks =[tensorboard])
+history = model.fit(X, y, epochs=50, steps_per_epoch=2000, validation_split=0.1, callbacks =[tensorboard])
 
 print(history.history.keys())
 print(history.history.values())
 
-test_loss, test_acc = model2.evaluate(testX, testY, verbose=2)
+test_loss, test_acc = model.evaluate(testX, testY, verbose=2)
 
-'''model2.save('Adam.h5')
-'''
+model.save('rmsprop.h5')
+
 print('\nTest accuracy:', test_acc)
