@@ -1,0 +1,7 @@
+*.h5
+*.bin
+/logs
+encoder.py
+features.npy
+__pycache__/
+model_pb2.py
