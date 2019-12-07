@@ -16,7 +16,7 @@ import os
 # DATADIR = "C:/Users/Kowalski/PycharmProjects/ML/Bite-detection/"
 DATADIR = "./"
 
-CATEGORIES = ["overbite", "underbite"]
+CATEGORIES = ["overbitex", "underbitex"]
 data = []
 for category_num in range(2):
     category = CATEGORIES[category_num]
@@ -55,7 +55,7 @@ X = X.reshape((-1, 256, 256, 1))
 testX = testX_img.reshape((-1, 256, 256, 1))
 
 with CustomObjectScope({'GlorotUniform': glorot_uniform()}):
-    existing_model = load_model('./rmsprop4.h5')
+    existing_model = load_model('./finalmodel.h5')
     # Show the model architecture
 existing_model.summary()
 loss, acc = existing_model.evaluate(X,  (y), verbose=2)
