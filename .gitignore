@@ -1,4 +1,4 @@
-*.h5
+
 *.bin
 /logs
 encoder.py
