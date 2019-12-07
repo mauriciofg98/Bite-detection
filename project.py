@@ -22,7 +22,7 @@ tensorboard =TensorBoard(log_dir='logs/{}'.format(NAME))
 #DATADIR = "C:/Users/Kowalski/PycharmProjects/ML/Bite-detection/"
 DATADIR = "./"
 
-CATEGORIES = ["overbite", "underbite"]
+CATEGORIES = ["overbitex", "underbitex"]
 data = []
 for category_num in range(2):
     category = CATEGORIES[category_num]
@@ -133,13 +133,13 @@ model.add(Activation('sigmoid'))
 model.compile(optimizer=rmsprop(lr=0.00001),loss='binary_crossentropy',metrics=['accuracy'])
 
 
-history = model.fit(X, y, epochs=8, steps_per_epoch=200,validation_split=0.1, validation_steps=100, callbacks =[tensorboard])
+history = model.fit(X, y, epochs=20, steps_per_epoch=200,validation_split=0.1, validation_steps=100, callbacks =[tensorboard])
 
 print(history.history.keys())
 print(history.history.values())
 
 test_loss, test_acc = model.evaluate(testX, testY, verbose=2)
 
-model.save('rmsprop5.h5')
+model.save('finalmodel.h5')
 
 print('\nTest accuracy:', test_acc)
